@@ -33,7 +33,7 @@ export const Navbar = () => {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue("white", "gray.800")}
+        bg={"transparent"}
         color={useColorModeValue("gray.600", "white")}
         minH={"60px"}
         py={{ base: 3 }}
@@ -42,6 +42,8 @@ export const Navbar = () => {
         borderStyle={"solid"}
         borderColor={useColorModeValue("gray.200", "gray.900")}
         align={"center"}
+        position={"fixed"}
+        width={"100%"}
       >
         <Flex
           flex={{ base: 1, md: "auto" }}
