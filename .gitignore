@@ -1,3 +1,9 @@
+# IDE
+.history
+
+# Project 
+.env.local
+
 # Logs
 logs
 *.log
