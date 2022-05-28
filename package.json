@@ -2,6 +2,7 @@
   "name": "eth-dex",
   "version": "0.1.0",
   "private": true,
+  "description": "A baisc eth dex",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
