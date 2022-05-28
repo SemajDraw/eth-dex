@@ -1,9 +1,9 @@
-const EthDex = artifacts.require("EthDex");
-const EthSwap = artifacts.require("EthSwap");
+const EthDex = artifacts.require('EthDex');
+const EthSwap = artifacts.require('EthSwap');
 
 module.exports = async function (deployer) {
   // Deploy EthDex Token
-  await deployer.deploy(EthDex, 100000000000, "EthDex Token", 18, "ETHDEX");
+  await deployer.deploy(EthDex, 100000000000, 'EthDex Token', 18, 'ETHDEX');
   const ethDex = await EthDex.deployed();
 
   // Deploy EthSwap
