@@ -1,9 +1,17 @@
+import { EthDexConfig } from '../src/constants/contracts';
+
 const EthDex = artifacts.require('EthDex');
 const EthSwap = artifacts.require('EthSwap');
 
 module.exports = async function (deployer) {
   // Deploy EthDex Token
-  await deployer.deploy(EthDex, 100000000000, 'EthDex Token', 18, 'ETHDEX');
+  await deployer.deploy(
+    EthDex,
+    EthDexConfig.INITIAL_SUPPLY,
+    EthDexConfig.TOKEN_NAME,
+    EthDexConfig.DECIMAL_UNITS,
+    EthDexConfig.TOKEN_SYMBOL
+  );
   const ethDex = await EthDex.deployed();
 
   // Deploy EthSwap

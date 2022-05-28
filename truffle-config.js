@@ -7,6 +7,7 @@ module.exports = {
     },
   },
   contracts_directory: './src/contracts/',
+  test_file_extension_regexp: /.*\.ts$/,
   compilers: {
     solc: {
       version: '0.8.14',
