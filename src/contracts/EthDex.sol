@@ -96,11 +96,14 @@ contract EthDex is SafeMath {
         address _to,
         uint256 _value
     ) public returns (bool success) {
-        require(_to != address(0x0)); // Prevent transfer to 0x0 address. Use burn() instead
-        require(_value > 0);
-        require(balanceOf[_from] >= _value); // Check if the sender has enough
-        require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
-        require(_value <= allowance[_from][msg.sender]); // Check allowance
+        require(_to != address(0x0), 'Use burn function to burn tokens'); // Prevent transfer to 0x0 address. Use burn() instead
+        require(_value > 0, 'Value must be greater than 0');
+        require(balanceOf[_from] >= _value, 'Insufficient Balance'); // Check if the sender has enough
+        require(balanceOf[_to] + _value > balanceOf[_to], 'Recipient Overflow'); // Check for overflows
+        require(
+            _value <= allowance[_from][msg.sender],
+            'Insufficient Allowance'
+        ); // Check allowance
         balanceOf[_from] = SafeMath.safeSub(balanceOf[_from], _value); // Subtract from the sender
         balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value); // Add the same to the recipient
         allowance[_from][msg.sender] = SafeMath.safeSub(
