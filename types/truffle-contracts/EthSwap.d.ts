@@ -19,12 +19,34 @@ export interface EthSwapInstance extends Truffle.ContractInstance {
 
   ethDex(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  rate(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  buyTokens: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse<AllEvents>
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
   name(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   methods: {
     _name(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
     ethDex(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+    rate(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+    buyTokens: {
+      (txDetails?: Truffle.TransactionDetails): Promise<
+        Truffle.TransactionResponse<AllEvents>
+      >;
+      call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+      sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+      estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    };
 
     name(txDetails?: Truffle.TransactionDetails): Promise<string>;
   };
