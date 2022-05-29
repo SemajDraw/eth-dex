@@ -9,7 +9,7 @@
     "start": "next start",
     "testsc": "truffle test",
     "lint": "next lint",
-    "migrate": "truffle migrate && npm run generate",
+    "migrate": "truffle migrate --reset && npm run generate",
     "prettier": "npx prettier --write .",
     "generate": "truffle compile && typechain --target=truffle-v5 './build/**/*.json'",
     "prepare": "husky install"

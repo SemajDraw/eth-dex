@@ -15,12 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "./test/**/*.ts",
-    "truffle-config.js"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "truffle-config.js"],
   "exclude": ["node_modules"]
 }

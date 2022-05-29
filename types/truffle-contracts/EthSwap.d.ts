@@ -6,7 +6,10 @@ import BN from 'bn.js';
 import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface EthSwapContract extends Truffle.Contract<EthSwapInstance> {
-  'new'(meta?: Truffle.TransactionDetails): Promise<EthSwapInstance>;
+  'new'(
+    _ethDex: string,
+    meta?: Truffle.TransactionDetails
+  ): Promise<EthSwapInstance>;
 }
 
 type AllEvents = never;
@@ -14,10 +17,14 @@ type AllEvents = never;
 export interface EthSwapInstance extends Truffle.ContractInstance {
   _name(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  ethDex(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   name(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   methods: {
     _name(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+    ethDex(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
     name(txDetails?: Truffle.TransactionDetails): Promise<string>;
   };

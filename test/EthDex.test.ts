@@ -1,22 +1,20 @@
 const EthDex = artifacts.require('EthDex');
 const truffleAssert = require('truffle-assertions');
 
+const toWei = (n) => {
+  return web3.utils.toWei(n, 'ether');
+};
+
 const EthDexConfig = {
-  INITIAL_SUPPLY: '1000000000000000000000000000',
+  INITIAL_SUPPLY: toWei('1000000000'),
   TOKEN_NAME: 'EthDex Token',
   DECIMAL_UNITS: 18,
   TOKEN_SYMBOL: 'ETHDEX',
 };
 
-const tokens = (n) => {
-  return web3.utils.toWei(n, 'ether');
-};
-
-contract('EthDex', async () => {
+contract('EthDex', async ([deployer, investor]) => {
   let ethDex;
-  let owner;
   let value;
-  const mockAddress = '0xb27fa9f8561eb0964dfec0da698cefb4074497c5';
 
   before(async () => {
     ethDex = await EthDex.new(
@@ -25,115 +23,123 @@ contract('EthDex', async () => {
       EthDexConfig.DECIMAL_UNITS,
       EthDexConfig.TOKEN_SYMBOL
     );
-    owner = await ethDex.owner();
-    value = tokens('100');
+    value = toWei('100');
   });
 
-  it('contract has correct name', async () => {
-    assert.equal(await ethDex.name(), EthDexConfig.TOKEN_NAME);
+  describe('contract information', async () => {
+    it('contract has correct name', async () => {
+      assert.equal(await ethDex.name(), EthDexConfig.TOKEN_NAME);
+    });
+
+    it('contract has correct initialSupply', async () => {
+      assert.equal(await ethDex.totalSupply(), EthDexConfig.INITIAL_SUPPLY);
+    });
+
+    it('contract has correct decimalUnits', async () => {
+      assert.equal(await ethDex.decimals(), EthDexConfig.DECIMAL_UNITS);
+    });
+
+    it('contract has correct initialSupply', async () => {
+      assert.equal(await ethDex.symbol(), EthDexConfig.TOKEN_SYMBOL);
+    });
   });
 
-  it('contract has correct initialSupply', async () => {
-    assert.equal(await ethDex.totalSupply(), EthDexConfig.INITIAL_SUPPLY);
+  describe('non event emmiting functions', async () => {
+    it('owner has correct balance', async () => {
+      const balance = await ethDex.balanceOf(deployer);
+      assert.equal(balance, EthDexConfig.INITIAL_SUPPLY);
+    });
+
+    it('approve returns true', async () => {
+      const value = toWei('100');
+      const approve = await ethDex.approve(investor, value);
+
+      assert.isTrue(approve.receipt.status);
+    });
   });
 
-  it('contract has correct decimalUnits', async () => {
-    assert.equal(await ethDex.decimals(), EthDexConfig.DECIMAL_UNITS);
-  });
+  describe('event emmiting functions', async () => {
+    it('transfer event is emmited', async () => {
+      const initialBalanceOwner = await ethDex.balanceOf(deployer);
+      const transfer = await ethDex.transfer(investor, value);
+      const balanceOwner = await ethDex.balanceOf(deployer);
+      const balanceReceiver = await ethDex.balanceOf(investor);
 
-  it('contract has correct initialSupply', async () => {
-    assert.equal(await ethDex.symbol(), EthDexConfig.TOKEN_SYMBOL);
-  });
+      truffleAssert.eventEmitted(transfer, 'Transfer', async (event) => {
+        return (
+          event.from === deployer &&
+          event.to === investor &&
+          event.value === value
+        );
+      });
+      assert.equal(
+        BigInt(balanceOwner),
+        BigInt(initialBalanceOwner) - BigInt(value)
+      );
+      assert.equal(balanceReceiver, value);
+    });
 
-  it('owner has correct balance', async () => {
-    const balance = await ethDex.balanceOf(await ethDex.owner());
-    assert.equal(balance, EthDexConfig.INITIAL_SUPPLY);
-  });
+    it('transfer event is emmited by transferFrom', async () => {
+      const initialBalanceOwner = await ethDex.balanceOf(deployer);
+      const approve = await ethDex.approve(deployer, value);
+      const transfer = await ethDex.transferFrom(deployer, investor, value);
+      const balanceOwner = await ethDex.balanceOf(deployer);
+      const balanceReceiver = await ethDex.balanceOf(investor);
 
-  it('approve returns true', async () => {
-    const value = tokens('100');
-    const approve = await ethDex.approve(mockAddress, value);
+      truffleAssert.eventEmitted(transfer, 'Transfer', async (event) => {
+        return (
+          event.from === deployer &&
+          event.to === investor &&
+          event.value === value
+        );
+      });
+      assert.equal(
+        BigInt(balanceOwner),
+        BigInt(initialBalanceOwner) - BigInt(value)
+      );
+      assert.equal(BigInt(balanceReceiver), BigInt(toWei('200')));
+    });
 
-    assert.isTrue(approve.receipt.status);
-  });
+    it('burn event is emmited', async () => {
+      const initialBalanceOwner = await ethDex.balanceOf(deployer);
+      const burn = await ethDex.burn(value);
+      const balanceOwner = await ethDex.balanceOf(deployer);
 
-  it('transfer event is emmited', async () => {
-    const initialBalanceOwner = await ethDex.balanceOf(owner);
-    const transfer = await ethDex.transfer(mockAddress, value);
-    const balanceOwner = await ethDex.balanceOf(owner);
-    const balanceReceiver = await ethDex.balanceOf(mockAddress);
-
-    truffleAssert.eventEmitted(transfer, 'Transfer', async (event) => {
-      return (
-        event.from === owner &&
-        event.to === mockAddress &&
-        event.value === value
+      truffleAssert.eventEmitted(burn, 'Burn', async (event) => {
+        return event.from === deployer && event.value === value;
+      });
+      assert.equal(
+        BigInt(balanceOwner),
+        BigInt(initialBalanceOwner) - BigInt(value)
       );
     });
-    assert.isBelow(
-      Number(balanceOwner),
-      Number(initialBalanceOwner) - Number(value)
-    );
-    assert.equal(balanceReceiver, value);
-  });
 
-  it('transfer event is emmited by transferFrom', async () => {
-    const initialBalanceOwner = await ethDex.balanceOf(owner);
-    const approve = await ethDex.approve(owner, value);
-    const transfer = await ethDex.transferFrom(owner, mockAddress, value);
-    const balanceOwner = await ethDex.balanceOf(owner);
-    const balanceReceiver = await ethDex.balanceOf(mockAddress);
+    it('freeze event is emmited', async () => {
+      const initialBalanceOwner = await ethDex.balanceOf(deployer);
+      const freeze = await ethDex.freeze(value);
+      const balanceOwner = await ethDex.balanceOf(deployer);
 
-    truffleAssert.eventEmitted(transfer, 'Transfer', async (event) => {
-      return (
-        event.from === owner &&
-        event.to === mockAddress &&
-        event.value === value
+      truffleAssert.eventEmitted(freeze, 'Freeze', async (event) => {
+        return event.from === deployer && event.value === value;
+      });
+      assert.equal(
+        BigInt(balanceOwner),
+        BigInt(initialBalanceOwner) - BigInt(value)
       );
     });
-    assert.equal(
-      Number(balanceOwner),
-      Number(initialBalanceOwner) - Number(value)
-    );
-    assert.equal(Number(balanceReceiver), Number(tokens('200')));
-  });
 
-  it('burn event is emmited', async () => {
-    const initialBalanceOwner = await ethDex.balanceOf(owner);
-    const burn = await ethDex.burn(value);
-    const balanceOwner = await ethDex.balanceOf(owner);
+    it('unfreeze event is emmited', async () => {
+      const initialBalanceOwner = await ethDex.balanceOf(deployer);
+      const unfreeze = await ethDex.unfreeze(value);
+      const balanceOwner = await ethDex.balanceOf(deployer);
 
-    truffleAssert.eventEmitted(burn, 'Burn', async (event) => {
-      return event.from === owner && event.value === value;
+      truffleAssert.eventEmitted(unfreeze, 'Unfreeze', async (event) => {
+        return event.from === deployer && event.value === value;
+      });
+      assert.equal(
+        BigInt(balanceOwner),
+        BigInt(initialBalanceOwner) + BigInt(value)
+      );
     });
-    assert.equal(
-      Number(balanceOwner),
-      Number(initialBalanceOwner) - Number(value)
-    );
-  });
-
-  it('freeze event is emmited', async () => {
-    const initialBalanceOwner = await ethDex.balanceOf(owner);
-    const freeze = await ethDex.freeze(value);
-    const balanceOwner = await ethDex.balanceOf(owner);
-
-    truffleAssert.eventEmitted(freeze, 'Freeze', async (event) => {
-      return event.from === owner && event.value === value;
-    });
-    assert.isBelow(
-      Number(balanceOwner),
-      Number(initialBalanceOwner) - Number(value)
-    );
-  });
-
-  it('unfreeze event is emmited', async () => {
-    const initialBalanceOwner = await ethDex.balanceOf(owner);
-    const unfreeze = await ethDex.unfreeze(value);
-    const balanceOwner = await ethDex.balanceOf(owner);
-
-    truffleAssert.eventEmitted(unfreeze, 'Unfreeze', async (event) => {
-      return event.from === owner && event.value === value;
-    });
-    assert.isAbove(Number(balanceOwner), Number(initialBalanceOwner));
   });
 });
