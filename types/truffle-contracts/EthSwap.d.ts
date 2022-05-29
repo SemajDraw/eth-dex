@@ -2,17 +2,31 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface EthSwapContract extends Truffle.Contract<EthSwapInstance> {
-  "new"(
+  'new'(
     _ethDex: string,
     meta?: Truffle.TransactionDetails
   ): Promise<EthSwapInstance>;
 }
 
-type AllEvents = never;
+export interface TokenBought {
+  name: 'TokenBought';
+  args: {
+    account: string;
+    token: string;
+    amount: BN;
+    rate: BN;
+    0: string;
+    1: string;
+    2: BN;
+    3: BN;
+  };
+}
+
+type AllEvents = TokenBought;
 
 export interface EthSwapInstance extends Truffle.ContractInstance {
   _name(txDetails?: Truffle.TransactionDetails): Promise<string>;

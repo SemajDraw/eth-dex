@@ -87,11 +87,10 @@ contract('EthDex', async ([deployer, investor]) => {
       const balanceReceiver = await ethDex.balanceOf(investor);
 
       truffleAssert.eventEmitted(transfer, 'Transfer', async (event) => {
-        return (
-          event.from === deployer &&
-          event.to === investor &&
-          event.value === value
-        );
+        assert.equal(event.from, deployer);
+        assert.equal(event.to, investor);
+        assert.equal(event.value, value);
+        return;
       });
       assert.equal(
         BigInt(balanceOwner),
@@ -106,7 +105,9 @@ contract('EthDex', async ([deployer, investor]) => {
       const balanceOwner = await ethDex.balanceOf(deployer);
 
       truffleAssert.eventEmitted(burn, 'Burn', async (event) => {
-        return event.from === deployer && event.value === value;
+        assert.equal(event.from, deployer);
+        assert.equal(event.value, value);
+        return;
       });
       assert.equal(
         BigInt(balanceOwner),
@@ -120,7 +121,9 @@ contract('EthDex', async ([deployer, investor]) => {
       const balanceOwner = await ethDex.balanceOf(deployer);
 
       truffleAssert.eventEmitted(freeze, 'Freeze', async (event) => {
-        return event.from === deployer && event.value === value;
+        assert.equal(event.from, deployer);
+        assert.equal(event.value, value);
+        return;
       });
       assert.equal(
         BigInt(balanceOwner),
@@ -134,7 +137,9 @@ contract('EthDex', async ([deployer, investor]) => {
       const balanceOwner = await ethDex.balanceOf(deployer);
 
       truffleAssert.eventEmitted(unfreeze, 'Unfreeze', async (event) => {
-        return event.from === deployer && event.value === value;
+        assert.equal(event.from, deployer);
+        assert.equal(event.value, value);
+        return;
       });
       assert.equal(
         BigInt(balanceOwner),

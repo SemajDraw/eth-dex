@@ -1,5 +1,6 @@
 const EthDex = artifacts.require('EthDex');
 const EthSwap = artifacts.require('EthSwap');
+const truffleAssert = require('truffle-assertions');
 import('chai').then((chai) => chai.use(require('chai-as-promised')).should());
 
 const toWei = (n) => {
@@ -39,11 +40,14 @@ contract('EthSwap', async ([deployer, investor]) => {
     });
   });
 
-  describe('buyTokens', async () => {
-    let result;
+  describe('buyTokens function', async () => {
+    let transaction;
 
     before(async () => {
-      result = await ethSwap.buyTokens({ from: investor, value: toWei('1') });
+      transaction = await ethSwap.buyTokens({
+        from: investor,
+        value: toWei('1'),
+      });
     });
 
     it('investor credited with EthDex token', async () => {
@@ -51,15 +55,23 @@ contract('EthSwap', async ([deployer, investor]) => {
       assert.equal(investorBalance, toWei('100'));
     });
 
-    // it('contract debited EthDex token & credited ether', async () => {
-    //   const ethDexBalance = await ethDex.balanceOf(ethSwap.address);
-    //   assert.equal(
-    //     BigInt(ethDexBalance),
-    //     BigInt(EthDexConfig.INITIAL_SUPPLY) - BigInt(toWei('100'))
-    //   );
+    it('contract debited EthDex token & credited ether', async () => {
+      const ethDexBalance = await ethDex.balanceOf(ethSwap.address);
+      assert.equal(
+        BigInt(ethDexBalance),
+        BigInt(EthDexConfig.INITIAL_SUPPLY) - BigInt(toWei('100'))
+      );
 
-    //   const ethBalance = await web3.eth.balanceOf(ethSwap.address);
-    //   assert.equal(ethBalance.toString(), toWei('1'));
-    // });
+      const ethBalance = await web3.eth.getBalance(ethSwap.address);
+      assert.equal(ethBalance.toString(), toWei('1'));
+    });
+
+    it('TokenBought event emmited', async () => {
+      truffleAssert.eventEmitted(transaction, 'TokenBought', async (event) => {
+        assert.equal(event['0'], investor);
+        assert.equal(event['1'], ethDex.address);
+        return;
+      });
+    });
   });
 });
