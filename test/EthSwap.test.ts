@@ -1,7 +1,11 @@
 const EthDex = artifacts.require('EthDex');
 const EthSwap = artifacts.require('EthSwap');
 const truffleAssert = require('truffle-assertions');
-import('chai').then((chai) => chai.use(require('chai-as-promised')).should());
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+
+chai.should();
+chai.use(chaiAsPromised);
 
 const toWei = (n) => {
   return web3.utils.toWei(n, 'ether');
@@ -55,21 +59,23 @@ contract('EthSwap', async ([deployer, investor]) => {
       assert.equal(investorBalance, toWei('100'));
     });
 
-    it('contract debited EthDex token & credited ether', async () => {
+    it('contract debited EthDex token', async () => {
       const ethDexBalance = await ethDex.balanceOf(ethSwap.address);
       assert.equal(
         BigInt(ethDexBalance),
         BigInt(EthDexConfig.INITIAL_SUPPLY) - BigInt(toWei('100'))
       );
+    });
 
+    it('contract credited Ether', async () => {
       const ethBalance = await web3.eth.getBalance(ethSwap.address);
       assert.equal(ethBalance.toString(), toWei('1'));
     });
 
-    it('TokenBought event emmited', async () => {
-      truffleAssert.eventEmitted(transaction, 'TokenBought', async (event) => {
-        assert.equal(event['0'], investor);
-        assert.equal(event['1'], ethDex.address);
+    it('TokenSwap event emmited', async () => {
+      truffleAssert.eventEmitted(transaction, 'TokenSwap', async (event) => {
+        assert.equal(event.from, investor);
+        assert.equal(event.token, ethDex.address);
         return;
       });
     });
@@ -77,9 +83,40 @@ contract('EthSwap', async ([deployer, investor]) => {
 
   describe('sellTokens function', async () => {
     let transaction;
-
+    const value = toWei('100');
     before(async () => {
-      transaction = await ethSwap.sellTokens(toWei(100));
+      // Approve spending of tokens by EthSwap
+      await ethDex.approve(ethSwap.address, value, { from: investor });
+      // Spend tokens
+      transaction = await ethSwap.sellTokens(value, { from: investor });
+    });
+
+    it('investor debited EthDex token', async () => {
+      const investorBalance = await ethDex.balanceOf(investor);
+      assert.equal(investorBalance.toString(), toWei('0'));
+    });
+
+    it('contract credited EthDex', async () => {
+      const ethDexBalance = await ethDex.balanceOf(ethSwap.address);
+      assert.equal(ethDexBalance, EthDexConfig.INITIAL_SUPPLY);
+    });
+
+    it('contract debited Ether', async () => {
+      const ethBalance = await web3.eth.getBalance(ethSwap.address);
+      assert.equal(ethBalance.toString(), toWei('0'));
+    });
+
+    it('TokenSwap event emmited', async () => {
+      truffleAssert.eventEmitted(transaction, 'TokenSwap', async (event) => {
+        assert.equal(event.from, investor);
+        assert.equal(event.token, ethDex.address);
+        return;
+      });
+    });
+
+    it('investor cannot sell more Tokens than balance', async () => {
+      await ethSwap.sellTokens(toWei('500'), { from: investor }).should.be
+        .rejected;
     });
   });
 });

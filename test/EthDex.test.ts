@@ -1,5 +1,10 @@
 const EthDex = artifacts.require('EthDex');
 const truffleAssert = require('truffle-assertions');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+
+chai.should();
+chai.use(chaiAsPromised);
 
 const toWei = (n) => {
   return web3.utils.toWei(n, 'ether');

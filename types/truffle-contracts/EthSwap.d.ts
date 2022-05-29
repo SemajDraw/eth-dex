@@ -12,10 +12,10 @@ export interface EthSwapContract extends Truffle.Contract<EthSwapInstance> {
   ): Promise<EthSwapInstance>;
 }
 
-export interface TokenBought {
-  name: 'TokenBought';
+export interface TokenSwap {
+  name: 'TokenSwap';
   args: {
-    account: string;
+    from: string;
     token: string;
     amount: BN;
     rate: BN;
@@ -26,7 +26,7 @@ export interface TokenBought {
   };
 }
 
-type AllEvents = TokenBought;
+type AllEvents = TokenSwap;
 
 export interface EthSwapInstance extends Truffle.ContractInstance {
   _name(txDetails?: Truffle.TransactionDetails): Promise<string>;
