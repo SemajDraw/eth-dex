@@ -39,9 +39,28 @@ export interface EthSwapInstance extends Truffle.ContractInstance {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse<AllEvents>
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  sellTokens: {
+    (
+      _value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      _value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<boolean>;
+    sendTransaction(
+      _value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
   };
 
   name(txDetails?: Truffle.TransactionDetails): Promise<string>;
@@ -57,9 +76,28 @@ export interface EthSwapInstance extends Truffle.ContractInstance {
       (txDetails?: Truffle.TransactionDetails): Promise<
         Truffle.TransactionResponse<AllEvents>
       >;
-      call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+      call(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
       sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
       estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    };
+
+    sellTokens: {
+      (
+        _value: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        _value: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<boolean>;
+      sendTransaction(
+        _value: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        _value: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
     };
 
     name(txDetails?: Truffle.TransactionDetails): Promise<string>;

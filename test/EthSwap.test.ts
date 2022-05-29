@@ -74,4 +74,12 @@ contract('EthSwap', async ([deployer, investor]) => {
       });
     });
   });
+
+  describe('sellTokens function', async () => {
+    let transaction;
+
+    before(async () => {
+      transaction = await ethSwap.sellTokens(toWei(100));
+    });
+  });
 });

@@ -19,7 +19,7 @@ contract EthSwap {
         ethDex = _ethDex;
     }
 
-    function buyTokens() public payable {
+    function buyTokens() public payable returns (bool success) {
         // Calculate the number of EthDex tokens to purchase
         uint256 tokenAmount = msg.value * rate;
 
@@ -32,6 +32,17 @@ contract EthSwap {
 
         // Emit a token bought event
         emit TokenBought(msg.sender, address(ethDex), tokenAmount, rate);
+        return true;
+    }
+
+    function sellTokens(uint256 _value) public returns (bool success) {
+        // Calculate the amoiunt of Ether to purchase
+        uint256 etherAmount = _value / rate;
+
+        // Transfer to EthSwap
+        ethDex.transferFrom(msg.sender, address(this), _value);
+        payable(msg.sender).transfer(etherAmount);
+        return true;
     }
 
     function name() public view returns (string memory) {
