@@ -12,6 +12,7 @@ import {
   useColorModeValue,
   Stack,
   Center,
+  Text,
 } from '@chakra-ui/react';
 import { DarkModeSwitch } from '../DarkModeSwitch';
 import { Props } from '../../interfaces/component';
@@ -33,10 +34,19 @@ const NavLink = ({ children }: Props) => (
 
 export const Navbar = () => {
   return (
-    <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+    <Box position={'fixed'} width={'100%'} bg={'transparent'} px={4}>
       <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
         <Box>
-          <NavLink>EthDex</NavLink>
+          <NavLink>
+            <Text
+              color={'purple.500'}
+              as={'i'}
+              fontSize={'2xl'}
+              fontWeight={700}
+            >
+              EthDex
+            </Text>
+          </NavLink>
         </Box>
 
         <Flex alignItems={'center'}>
