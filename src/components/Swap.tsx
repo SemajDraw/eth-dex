@@ -15,8 +15,11 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Formik, Form, Field, FieldProps, FormikValues } from 'formik';
+import { useMetamask } from '../hooks/useMetamask';
 
 export const Swap = () => {
+  //   const { connectMetamask, currentAccount } = useMetamask();
+
   const swapFieldValues = (values: FormikValues, setFieldValue: Function) => {
     const { from, to } = values;
     setFieldValue('from', to);
@@ -141,15 +144,26 @@ export const Swap = () => {
                       </FormControl>
                     )}
                   </Field>
-                  <Button
-                    mt={2}
-                    colorScheme="purple"
-                    isLoading={props.isSubmitting}
-                    type="submit"
-                    width={'100%'}
-                  >
-                    Submit
-                  </Button>
+                  {currentAccount ? (
+                    <Button
+                      mt={2}
+                      colorScheme="purple"
+                      isLoading={props.isSubmitting}
+                      type="submit"
+                      width={'100%'}
+                    >
+                      Swap
+                    </Button>
+                  ) : (
+                    <Button
+                      mt={2}
+                      colorScheme="purple.100"
+                      isLoading={props.isSubmitting}
+                      width={'100%'}
+                    >
+                      Connect Wallet
+                    </Button>
+                  )}
                 </Form>
               )}
             </Formik>

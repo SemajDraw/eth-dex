@@ -1,6 +1,6 @@
-import { Box, Flex } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import ClientComponent from '../components/ClientComponent';
 import { Swap } from '../components/Swap';
 
 const Home: NextPage = () => {
@@ -11,7 +11,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Basic Eth Dex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Swap />
+      <ClientComponent component={<Swap />} />
     </>
   );
 };
