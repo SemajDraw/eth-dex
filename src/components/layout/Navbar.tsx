@@ -9,13 +9,13 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
-  useColorModeValue,
   Stack,
   Center,
   Text,
 } from '@chakra-ui/react';
-import { DarkModeSwitch } from '../DarkModeSwitch';
+import { useWeb3Context } from '../../contexts/Web3Context';
 import { Props } from '../../interfaces/component';
+import { generateIdenticon } from '../../utils/generateIdenticon';
 
 const NavLink = ({ children }: Props) => (
   <Link
@@ -24,7 +24,6 @@ const NavLink = ({ children }: Props) => (
     rounded={'md'}
     _hover={{
       textDecoration: 'none',
-      bg: useColorModeValue('gray.200', 'gray.700'),
     }}
     href={'/'}
   >
@@ -33,13 +32,22 @@ const NavLink = ({ children }: Props) => (
 );
 
 export const Navbar = () => {
+  const {
+    account: { address },
+    connectWallet,
+  } = useWeb3Context();
+
+  const truncateAddress = (address: string) => {
+    return `${address.slice(0, 5)}...${address.slice(-5, -1)}`;
+  };
+
   return (
     <Box position={'fixed'} width={'100%'} bg={'transparent'} px={4}>
       <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
         <Box>
           <NavLink>
             <Text
-              color={'purple.500'}
+              color={'purple.300'}
               as={'i'}
               fontSize={'2xl'}
               fontWeight={700}
@@ -51,38 +59,51 @@ export const Navbar = () => {
 
         <Flex alignItems={'center'}>
           <Stack direction={'row'} spacing={7}>
-            <DarkModeSwitch />
-
-            <Menu>
-              <MenuButton
-                as={Button}
-                rounded={'full'}
-                variant={'link'}
-                cursor={'pointer'}
-                minW={0}
-              >
-                <Avatar
-                  size={'sm'}
-                  src={'https://avatars.dicebear.com/api/male/username.svg'}
-                />
-              </MenuButton>
-              <MenuList alignItems={'center'}>
-                <br />
-                <Center>
+            {address ? (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={'full'}
+                  variant={'link'}
+                  cursor={'pointer'}
+                  minW={0}
+                >
                   <Avatar
-                    size={'2xl'}
-                    src={'https://avatars.dicebear.com/api/male/username.svg'}
+                    size={'sm'}
+                    src={`data:image/png;base64,${generateIdenticon(
+                      address,
+                      32
+                    )}`}
                   />
-                </Center>
-                <br />
-                <Center>
-                  <p>Username</p>
-                </Center>
-                <br />
-                <MenuDivider />
-                <MenuItem>Logout</MenuItem>
-              </MenuList>
-            </Menu>
+                </MenuButton>
+                <MenuList maxWidth={'200px'} alignItems={'center'}>
+                  <br />
+                  <Center>
+                    <Avatar
+                      size={'2xl'}
+                      src={`data:image/png;base64,${generateIdenticon(
+                        address,
+                        32
+                      )}`}
+                    />
+                  </Center>
+                  <br />
+                  <Center>
+                    <Text>{truncateAddress(address)}</Text>
+                  </Center>
+                </MenuList>
+              </Menu>
+            ) : (
+              <Button
+                mt={2}
+                bg={address ? 'purple.300' : 'purple.200'}
+                _hover={{ bg: address ? 'purple.200' : 'purple.100' }}
+                color={'white'}
+                onClick={connectWallet}
+              >
+                Connect Wallet
+              </Button>
+            )}
           </Stack>
         </Flex>
       </Flex>

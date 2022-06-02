@@ -1,9 +1,6 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
-  Box,
-  Stack,
   Heading,
-  Text,
   Container,
   Input,
   Button,
@@ -11,14 +8,16 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
-  FormLabel,
   VStack,
 } from '@chakra-ui/react';
 import { Formik, Form, Field, FieldProps, FormikValues } from 'formik';
-import { useMetamask } from '../hooks/useMetamask';
+import { useWeb3Context } from '../contexts/Web3Context';
 
 export const Swap = () => {
-  //   const { connectMetamask, currentAccount } = useMetamask();
+  const {
+    account: { address },
+    connectWallet,
+  } = useWeb3Context();
 
   const swapFieldValues = (values: FormikValues, setFieldValue: Function) => {
     const { from, to } = values;
@@ -144,7 +143,7 @@ export const Swap = () => {
                       </FormControl>
                     )}
                   </Field>
-                  {currentAccount ? (
+                  {address ? (
                     <Button
                       mt={2}
                       colorScheme="purple"
@@ -157,9 +156,12 @@ export const Swap = () => {
                   ) : (
                     <Button
                       mt={2}
-                      colorScheme="purple.100"
+                      bg="purple.200"
+                      color={'white'}
+                      _hover={{ bg: 'purple.100' }}
                       isLoading={props.isSubmitting}
                       width={'100%'}
+                      onClick={connectWallet}
                     >
                       Connect Wallet
                     </Button>
