@@ -1,15 +1,31 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import Web3 from 'web3';
 import { Props } from '../interfaces/component';
-
+import { EthDexContract, EthSwapContract } from '../../types/truffle-contracts';
+import EthDex from '../../build/contracts/EthDex.json';
+import EthSwap from '../../build/contracts/EthSwap.json';
+import { useCookies } from 'react-cookie';
 interface Account {
-  address?: string | undefined;
-  balance?: string | undefined;
+  address?: string;
+  ethBalance?: string;
+}
+
+interface Contracts {
+  ethDex?: EthDexContract;
+  ethSwap?: EthSwapContract;
 }
 
 export const useWeb3 = () => {
+  const [cookies, setCookie] = useCookies(['__meta']);
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [account, setAccount] = useState<Account>({});
+  const [contracts, setContracts] = useState<Contracts>({});
+
+  useEffect(() => {
+    if (cookies?.__meta?.isConnected) {
+      connectWallet();
+    }
+  }, []);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -17,11 +33,29 @@ export const useWeb3 = () => {
       const web3 = new Web3(Web3.givenProvider);
       setWeb3(web3);
 
-      // Get current account
+      // Set current account
       const [address] = await web3.eth.requestAccounts();
-      const balance = await web3.eth.getBalance(address);
+      const ethBalance = await web3.eth.getBalance(address);
+      setAccount({ address, ethBalance });
 
-      setAccount({ address, balance });
+      try {
+        // Set the contracts
+        const network = await web3.eth.net.getId();
+        const ethDex = (await new web3.eth.Contract(
+          EthDex.abi as AbiItem[],
+          (EthDex.networks as any)[network].address
+        )) as any as EthDexContract;
+        const ethSwap = (await new web3.eth.Contract(
+          EthSwap.abi as AbiItem[],
+          (EthSwap.networks as any)[network].address
+        )) as any as EthSwapContract;
+
+        setContracts({ ethDex, ethSwap });
+      } catch (error) {
+        console.log(error?.message);
+      }
+
+      setCookie('__meta', { isConnected: true }, { path: '/' });
     } else {
       console.log('Please install a Web3 browser');
     }
