@@ -1,18 +1,20 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import Web3 from 'web3';
+import { Contract } from 'web3-eth-contract';
 import { Props } from '../interfaces/component';
-import { EthDexContract, EthSwapContract } from '../../types/truffle-contracts';
+// import { EthDexContract, EthSwapContract } from '../../types/truffle-contracts';
 import EthDex from '../../build/contracts/EthDex.json';
 import EthSwap from '../../build/contracts/EthSwap.json';
 import { useCookies } from 'react-cookie';
 interface Account {
   address?: string;
   ethBalance?: string;
+  ethDexBalance?: string;
 }
 
 interface Contracts {
-  ethDex?: EthDexContract;
-  ethSwap?: EthSwapContract;
+  ethDex?: Contract;
+  ethSwap?: Contract;
 }
 
 export const useWeb3 = () => {
@@ -33,28 +35,39 @@ export const useWeb3 = () => {
       const web3 = new Web3(Web3.givenProvider);
       setWeb3(web3);
 
-      // Set current account
+      // Get current account
       const [address] = await web3.eth.requestAccounts();
+
+      // Get the ETH balance
       const ethBalance = await web3.eth.getBalance(address);
+
+      // Get the network ID
+      const network = await web3.eth.net.getId();
+      const a = (EthSwap.networks as any)[network];
+
+      console.log('here', a);
+
+      // Get the contracts
+      const ethDex = await new web3.eth.Contract(
+        EthDex.abi as AbiItem[],
+        (EthDex.networks as any)[network]?.address
+      );
+      const ethSwap = await new web3.eth.Contract(
+        EthSwap.abi as AbiItem[],
+        (EthSwap.networks as any)[network]?.address
+      );
+
+      console.log(ethDex);
+      console.log(address);
+
+      // Get ETH dex balance
+      const ethDexBalance = await ethDex.methods.balanceOf(address).call();
+
+      // console.log('bal', ethDexBalance);
+
+      console.log('bal', ethDexBalance);
+      setContracts({ ethDex, ethSwap });
       setAccount({ address, ethBalance });
-
-      try {
-        // Set the contracts
-        const network = await web3.eth.net.getId();
-        const ethDex = (await new web3.eth.Contract(
-          EthDex.abi as AbiItem[],
-          (EthDex.networks as any)[network].address
-        )) as any as EthDexContract;
-        const ethSwap = (await new web3.eth.Contract(
-          EthSwap.abi as AbiItem[],
-          (EthSwap.networks as any)[network].address
-        )) as any as EthSwapContract;
-
-        setContracts({ ethDex, ethSwap });
-      } catch (error) {
-        console.log(error?.message);
-      }
-
       setCookie('__meta', { isConnected: true }, { path: '/' });
     } else {
       console.log('Please install a Web3 browser');

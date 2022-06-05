@@ -16,6 +16,7 @@ import {
 import { useWeb3Context } from '../../contexts/Web3Context';
 import { Props } from '../../interfaces/component';
 import { generateIdenticon } from '../../utils/generateIdenticon';
+import { DarkModeSwitch } from '../DarkModeSwitch';
 
 const NavLink = ({ children }: Props) => (
   <Link
@@ -59,6 +60,7 @@ export const Navbar = () => {
 
         <Flex alignItems={'center'}>
           <Stack direction={'row'} spacing={7}>
+            <DarkModeSwitch />
             {address ? (
               <Menu>
                 <MenuButton
