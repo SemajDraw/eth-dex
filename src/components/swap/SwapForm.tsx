@@ -1,8 +1,7 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex } from '@chakra-ui/react';
 import { Form, Formik, FormikProps } from 'formik';
-import { setTarget } from 'framer-motion/types/render/utils/setters';
-import { FormEvent, FormEventHandler, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useWeb3Context } from '../../contexts/Web3Context';
 import { CurrencyInputPanel } from './CurrencyInputPanel';
 import { toWei } from '../../utils/web3.utils';
@@ -26,7 +25,11 @@ const tokens = {
 const ETH_ETHDEX_RATE = 100;
 
 export const SwapForm = () => {
-  const { account, connectWallet, contracts } = useWeb3Context();
+  const {
+    account,
+    connectWallet,
+    contracts: { ethDex, ethSwap },
+  } = useWeb3Context();
 
   const [currencies, setCurrencies] = useState({
     input: tokens.eth,
@@ -60,13 +63,12 @@ export const SwapForm = () => {
 
   const swapTokens = async (value: BN) => {
     if (currencies.input.ticker === tokens.eth.ticker) {
-      await contracts.ethSwap?.methods
-        .buyTokens()
-        .send({ from: account, value });
+      await ethSwap?.methods.buyTokens().send({ from: account, value });
     } else {
-      await contracts.ethSwap?.methods
-        .sellTokens()
-        .send({ from: account, value });
+      await ethDex?.methods
+        .approve(ethSwap?.options.address, value)
+        .send({ from: account });
+      await ethSwap?.methods.sellTokens(value).send({ from: account });
     }
   };
 

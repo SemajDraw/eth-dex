@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { Props } from '../interfaces/component';
-// import { EthDexContract, EthSwapContract } from '../../types/truffle-contracts';
 import EthDex from '../../build/contracts/EthDex.json';
 import EthSwap from '../../build/contracts/EthSwap.json';
 import { useCookies } from 'react-cookie';
@@ -70,7 +69,7 @@ export const useWeb3 = () => {
         window.alert('Token contract not deployed to the detected network');
       }
     } else {
-      console.log('Please install a Web3 browser');
+      window.alert('Please install a Web3 browser');
     }
   };
 
