@@ -2,20 +2,20 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { EthDexContract } from './EthDex';
-import { EthSwapContract } from './EthSwap';
-import { MigrationsContract } from './Migrations';
+import { EthDexContract } from "./EthDex";
+import { EthSwapContract } from "./EthSwap";
+import { MigrationsContract } from "./Migrations";
 
 declare global {
   namespace Truffle {
     interface Artifacts {
-      require(name: 'EthDex'): EthDexContract;
-      require(name: 'EthSwap'): EthSwapContract;
-      require(name: 'Migrations'): MigrationsContract;
+      require(name: "EthDex"): EthDexContract;
+      require(name: "EthSwap"): EthSwapContract;
+      require(name: "Migrations"): MigrationsContract;
     }
   }
 }
 
-export { EthDexContract, EthDexInstance } from './EthDex';
-export { EthSwapContract, EthSwapInstance } from './EthSwap';
-export { MigrationsContract, MigrationsInstance } from './Migrations';
+export { EthDexContract, EthDexInstance } from "./EthDex";
+export { EthSwapContract, EthSwapInstance } from "./EthSwap";
+export { MigrationsContract, MigrationsInstance } from "./Migrations";

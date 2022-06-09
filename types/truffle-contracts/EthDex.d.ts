@@ -2,11 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from 'bn.js';
-import { EventData, PastEventOptions } from 'web3-eth-contract';
+import BN from "bn.js";
+import { EventData, PastEventOptions } from "web3-eth-contract";
 
 export interface EthDexContract extends Truffle.Contract<EthDexInstance> {
-  'new'(
+  "new"(
     initialSupply: number | BN | string,
     tokenName: string,
     decimalUnits: number | BN | string,
@@ -16,7 +16,7 @@ export interface EthDexContract extends Truffle.Contract<EthDexInstance> {
 }
 
 export interface Burn {
-  name: 'Burn';
+  name: "Burn";
   args: {
     from: string;
     value: BN;
@@ -26,7 +26,7 @@ export interface Burn {
 }
 
 export interface Freeze {
-  name: 'Freeze';
+  name: "Freeze";
   args: {
     from: string;
     value: BN;
@@ -36,7 +36,7 @@ export interface Freeze {
 }
 
 export interface Transfer {
-  name: 'Transfer';
+  name: "Transfer";
   args: {
     from: string;
     to: string;
@@ -48,7 +48,7 @@ export interface Transfer {
 }
 
 export interface Unfreeze {
-  name: 'Unfreeze';
+  name: "Unfreeze";
   args: {
     from: string;
     value: BN;
