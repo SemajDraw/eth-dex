@@ -3,7 +3,8 @@ module.exports = {
     development: {
       host: '127.0.0.1',
       port: 7545,
-      network_id: 5777,
+      network_id: '*',
+      skipDryRun: true,
     },
   },
   contracts_directory: './src/contracts/',
@@ -17,7 +18,6 @@ module.exports = {
           runs: 200,
         },
       },
-      evmVersion: 'petersburg',
     },
   },
 };

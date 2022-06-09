@@ -25,6 +25,7 @@ export const useWeb3 = () => {
 
   useEffect(() => {
     if (cookies?.__meta?.isConnected) {
+      console.log(cookies?.__meta?.isConnected);
       connectWallet();
     }
   }, []);

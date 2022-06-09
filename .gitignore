@@ -1,6 +1,8 @@
 # IDE
 .history
 
+*.DS_Store
+
 # Project 
 .env.local
 

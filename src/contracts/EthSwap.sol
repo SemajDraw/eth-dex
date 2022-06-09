@@ -21,7 +21,7 @@ contract EthSwap {
         // Require EthSwap has enough tokens
         require(
             ethDex.balanceOf(address(this)) >= tokenAmount,
-            'Insufficient Balanc'
+            'Insufficient Balance'
         );
         ethDex.transfer(msg.sender, tokenAmount);
 
