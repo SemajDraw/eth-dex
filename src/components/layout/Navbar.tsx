@@ -7,15 +7,13 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
-  MenuDivider,
   Stack,
   Center,
   Text,
 } from '@chakra-ui/react';
 import { useWeb3Context } from '../../contexts/Web3Context';
 import { Props } from '../../interfaces/component';
-import { generateIdenticon } from '../../utils/generateIdenticon';
+import { generateIdenticon } from '../../utils/generateIdenticon.utils';
 import { DarkModeSwitch } from '../DarkModeSwitch';
 
 const NavLink = ({ children }: Props) => (
@@ -33,10 +31,7 @@ const NavLink = ({ children }: Props) => (
 );
 
 export const Navbar = () => {
-  const {
-    account: { address },
-    connectWallet,
-  } = useWeb3Context();
+  const { account, connectWallet } = useWeb3Context();
 
   const truncateAddress = (address: string) => {
     return `${address.slice(0, 5)}...${address.slice(-5, -1)}`;
@@ -61,7 +56,7 @@ export const Navbar = () => {
         <Flex alignItems={'center'}>
           <Stack direction={'row'} spacing={7}>
             <DarkModeSwitch />
-            {address ? (
+            {account ? (
               <Menu>
                 <MenuButton
                   as={Button}
@@ -73,7 +68,7 @@ export const Navbar = () => {
                   <Avatar
                     size={'sm'}
                     src={`data:image/png;base64,${generateIdenticon(
-                      address,
+                      account,
                       32
                     )}`}
                   />
@@ -84,22 +79,22 @@ export const Navbar = () => {
                     <Avatar
                       size={'2xl'}
                       src={`data:image/png;base64,${generateIdenticon(
-                        address,
+                        account,
                         32
                       )}`}
                     />
                   </Center>
                   <br />
                   <Center>
-                    <Text>{truncateAddress(address)}</Text>
+                    <Text>{truncateAddress(account)}</Text>
                   </Center>
                 </MenuList>
               </Menu>
             ) : (
               <Button
                 mt={2}
-                bg={address ? 'purple.300' : 'purple.200'}
-                _hover={{ bg: address ? 'purple.200' : 'purple.100' }}
+                bg={account ? 'purple.300' : 'purple.200'}
+                _hover={{ bg: account ? 'purple.200' : 'purple.100' }}
                 color={'white'}
                 onClick={connectWallet}
               >

@@ -6,11 +6,6 @@ import { Props } from '../interfaces/component';
 import EthDex from '../../build/contracts/EthDex.json';
 import EthSwap from '../../build/contracts/EthSwap.json';
 import { useCookies } from 'react-cookie';
-interface Account {
-  address?: string;
-  ethBalance?: string;
-  ethDexBalance?: string;
-}
 
 interface Contracts {
   ethDex?: Contract;
@@ -20,12 +15,14 @@ interface Contracts {
 export const useWeb3 = () => {
   const [cookies, setCookie] = useCookies(['__meta']);
   const [web3, setWeb3] = useState<Web3 | null>(null);
-  const [account, setAccount] = useState<Account>({});
+  const [account, setAccount] = useState<string>('');
+  const [currencies, setCurrencies] = useState<{
+    [key: string]: string | undefined;
+  }>();
   const [contracts, setContracts] = useState<Contracts>({});
 
   useEffect(() => {
     if (cookies?.__meta?.isConnected) {
-      console.log(cookies?.__meta?.isConnected);
       connectWallet();
     }
   }, []);
@@ -37,45 +34,58 @@ export const useWeb3 = () => {
       setWeb3(web3);
 
       // Get current account
-      const [address] = await web3.eth.requestAccounts();
+      const [account] = await web3.eth.requestAccounts();
 
       // Get the ETH balance
-      const ethBalance = await web3.eth.getBalance(address);
+      const ethBalance = await web3.eth.getBalance(account);
 
       // Get the network ID
       const network = await web3.eth.net.getId();
-      const a = (EthSwap.networks as any)[network];
 
-      console.log('here', a);
+      // Get the current network data
+      const ethDexNetwork = (EthDex.networks as any)[network];
+      const ethSwapNetwork = (EthSwap.networks as any)[network];
 
-      // Get the contracts
-      const ethDex = await new web3.eth.Contract(
-        EthDex.abi as AbiItem[],
-        (EthDex.networks as any)[network]?.address
-      );
-      const ethSwap = await new web3.eth.Contract(
-        EthSwap.abi as AbiItem[],
-        (EthSwap.networks as any)[network]?.address
-      );
+      if (ethDexNetwork && ethSwapNetwork) {
+        // Get EthDex contract
+        const ethDex = await new web3.eth.Contract(
+          EthDex.abi as AbiItem[],
+          ethDexNetwork.address
+        );
 
-      console.log(ethDex);
-      console.log(address);
+        // Get EthSwap contract
+        const ethSwap = await new web3.eth.Contract(
+          EthSwap.abi as AbiItem[],
+          ethSwapNetwork.address
+        );
 
-      // Get ETH dex balance
-      const ethDexBalance = await ethDex.methods.balanceOf(address).call();
+        // Get EthDex balance
+        const ethDexBalance = await ethDex.methods.balanceOf(account).call();
 
-      // console.log('bal', ethDexBalance);
-
-      console.log('bal', ethDexBalance);
-      setContracts({ ethDex, ethSwap });
-      setAccount({ address, ethBalance });
-      setCookie('__meta', { isConnected: true }, { path: '/' });
+        setCurrencies({ ETH: ethBalance, ETHDEX: ethDexBalance });
+        setContracts({ ethDex, ethSwap });
+        setAccount(account);
+        setCookie('__meta', { isConnected: true }, { path: '/' });
+      } else {
+        window.alert('Token contract not deployed to the detected network');
+      }
     } else {
       console.log('Please install a Web3 browser');
     }
   };
 
-  return { web3, account, connectWallet };
+  const updateCurrencies = async () => {
+    if (account) {
+      setCurrencies({
+        ETH: (await web3?.eth.getBalance(account)) || currencies?.ETH,
+        ETHDEX: await contracts.ethDex?.methods.balanceOf(account).call(),
+      });
+    }
+  };
+
+  updateCurrencies();
+
+  return { web3, account, currencies, contracts, connectWallet };
 };
 
 export const Web3Context = createContext({} as ReturnType<typeof useWeb3>);

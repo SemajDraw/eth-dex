@@ -1,9 +1,9 @@
 {
   "contractName": "SafeMath",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.14+commit.80d49f37\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"Math operations with safety checks\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/src/contracts/EthDex.sol\":\"SafeMath\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/src/contracts/EthDex.sol\":{\"keccak256\":\"0x3ce99ae6d6d1238e6e2d00125d3e6681c57a8c1e543efc4195f0efbb58b1d535\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://686a67f9262015a0b04e7996e2f03f9d34f9c0a19ada9fc5e98d16781fb268e3\",\"dweb:/ipfs/QmQ2R6mQQz1Fqryo6nGanFo23uH2YtZc5Xqn8RzMHMhYBe\"]}},\"version\":1}",
-  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea264697066735822122038862b69851dcff8385fe07c27be33fca36ca761d3ba4cbed2825e1533752ca464736f6c634300080e0033",
-  "deployedBytecode": "0x6080604052600080fdfea264697066735822122038862b69851dcff8385fe07c27be33fca36ca761d3ba4cbed2825e1533752ca464736f6c634300080e0033",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.14+commit.80d49f37\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"Math operations with safety checks\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/src/contracts/EthDex.sol\":\"SafeMath\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/src/contracts/EthDex.sol\":{\"keccak256\":\"0x3ce99ae6d6d1238e6e2d00125d3e6681c57a8c1e543efc4195f0efbb58b1d535\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://686a67f9262015a0b04e7996e2f03f9d34f9c0a19ada9fc5e98d16781fb268e3\",\"dweb:/ipfs/QmQ2R6mQQz1Fqryo6nGanFo23uH2YtZc5Xqn8RzMHMhYBe\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220d3671616384a7e9244926fc5bac167f7eb049bd85c0138499d0b93dd9c57fa7f64736f6c634300080e0033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220d3671616384a7e9244926fc5bac167f7eb049bd85c0138499d0b93dd9c57fa7f64736f6c634300080e0033",
   "immutableReferences": {},
   "generatedSources": [],
   "deployedGeneratedSources": [],
@@ -8556,7 +8556,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-06-08T23:49:31.765Z",
+  "updatedAt": "2022-06-09T02:54:43.735Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

@@ -2,19 +2,13 @@ const EthDex = artifacts.require('EthDex');
 const truffleAssert = require('truffle-assertions');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const { EthDexConfig } = require('../src/constants/contracts');
 
 chai.should();
 chai.use(chaiAsPromised);
 
 const toWei = (n) => {
   return web3.utils.toWei(n, 'ether');
-};
-
-const EthDexConfig = {
-  INITIAL_SUPPLY: toWei('1000000000'),
-  TOKEN_NAME: 'EthDex Token',
-  DECIMAL_UNITS: 18,
-  TOKEN_SYMBOL: 'ETHDEX',
 };
 
 contract('EthDex', async ([deployer, investor]) => {

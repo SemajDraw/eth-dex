@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import ClientComponent from '../components/ClientComponent';
-import { Swap } from '../components/Swap';
+import { Swap } from '../components/swap/Swap';
 
 const Home: NextPage = () => {
   return (
